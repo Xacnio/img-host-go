@@ -8,6 +8,8 @@ import (
 	"github.com/Xacnio/img-host-go/app/models"
 	"github.com/Xacnio/img-host-go/platform/database"
 	"github.com/lithammer/shortuuid/v3"
+	"mime/multipart"
+	"net/http"
 )
 
 func ValidImageContentType(contentType string) bool {
@@ -91,4 +93,14 @@ func ShortUuidGenerate() string {
 		return u
 	}
 	return ""
+}
+
+func GetFileContentType(out multipart.File) (string, error) {
+	buffer := make([]byte, 512)
+	_, err := out.Read(buffer)
+	if err != nil {
+		return "", err
+	}
+	contentType := http.DetectContentType(buffer)
+	return contentType, nil
 }

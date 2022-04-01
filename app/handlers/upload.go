@@ -81,6 +81,15 @@ func UploadImage(c *fiber.Ctx) error {
 						if file.Size > 5 * 1024 * 1024 {
 							return ErrorUpload(c, "Max 5 MB per image!")
 						}
+						f, ee := file.Open()
+						if ee != nil {
+							continue
+						}
+						contentType, err := utils.GetFileContentType(f)
+						f.Close()
+						if err != nil || contentType != file.Header.Get("Content-type") {
+							continue
+						}
 						if utils.ValidImageContentType(file.Header.Get("Content-type")) {
 							validFiles = append(validFiles, *file)
 						}
