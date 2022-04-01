@@ -1,0 +1,91 @@
+<!doctype html>
+<html lang="tr">
+<head>
+    <title>{{if .Title}}{{.Title}}{{else}}Image Upload{{end}}</title>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta property="og:title" content="{{if .Title}}{{.Title}}{{else}}Image Upload{{end}}"/>
+    <meta property="og:site_name" content="Image Upload"/>
+    {{if .ImagePreview}}<meta property="og:image" content="{{.ImagePreview}}"/>{{end}}
+    <link rel="stylesheet" href="css/index.css?v=3">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <link rel="preconnect" href="https://fonts.gstatic.com">
+    <link href="https://fonts.googleapis.com/css2?family=Open+Sans:wght@300;400;500;700&family=Roboto&display=swap" rel="stylesheet">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.16.0/umd/popper.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+    <script src="js/jquery.lazy.min.js"></script>
+</head>
+<body>
+    <div class="i-container">
+        <h3>Image Upload</h3>
+        <p>png, jpg, gif, webp</p>
+        <div style="width: fit-content;margin: 0 auto;margin-bottom: 60px;">{{ if .ImageView }}<a href="/"><button type="button" class="btn btn-primary">Upload</button></a>{{ end }}</div>
+        <div class="row">
+            {{ if not .ImageView }}
+            <div class="col-sm-12">
+                <div class="form-inner">
+                    <form action="/upload" method="post" enctype="multipart/form-data">
+                        {{ if .Error }}
+                            <div class="alert alert-danger" id="error">{{.Error}}</div>
+                        {{ end }}
+                        <input type="hidden" name="kk" value="{{.Key}}" />
+                        <input type="hidden" name="hh" value="{{.Hash}}" />
+                        <div class="uploading">
+                            <div class="upload-select">
+                                <span>Select files or drag here</span>
+                                <input type="file" accept="image/png,image/jpeg,image/bmp,image/gif,image/webp" name="images" id="images" multiple>
+                            </div>
+                            <div class="upload-button" id="upload-button" style="display:none;" onclick="$('form').submit();">Upload</div>
+                        </div>
+                    </form>
+                </div>
+                <div class="uploading" id="files"></div>
+            </div>
+            {{ end }}
+            {{ if .ImageView }}
+            <div class="col-sm-7">
+                <div class="row">
+                    {{range .Images}}
+                    <div class="col-sm-3">
+                        <div class="image-preview">
+                            <a href="{{.DirectURL}}" target="_blank"><img class="lazy" data-src="{{.DirectURL}}"></a>
+                            <hr>
+                            {{.Filename}}
+                        </div>
+                    </div>
+                    {{end}}
+                </div>
+                <div style="clear:both;margin-top:25px;"></div>
+                <b>URL:</b><br>
+                <textarea id="urla" style="resize:both;width:100%;height:100px;max-width: 500px;" onclick="if (!window.__cfRLUnblockHandlers) return false; this.select();">{{if .UrlList}}{{index .UrlList 5}}{{end}}</textarea>
+                <br><button class="btn btn-primary" onclick="copyText2('urla')" id="copyButton">Kopyala</button>
+                <hr>
+                <b>Direkt Resim:</b><br>
+                <textarea id="url" style="resize:both;width:100%;height:100px;max-width: 500px;" onclick="if (!window.__cfRLUnblockHandlers) return false; this.select();">{{if .UrlList}}{{index .UrlList 0}}{{end}}</textarea>
+                <br><button class="btn btn-primary" onclick="copyText2('url')" id="copyButton">Kopyala</button>
+            </div>
+            <div class="col-sm-5">
+                <b>Forum BBCode (URL):</b><br>
+                <textarea id="forum1" style="resize:both;width:100%;height:100px;max-width: 500px;" onclick="if (!window.__cfRLUnblockHandlers) return false; this.select();">{{if .UrlList}}{{index .UrlList 1}}{{end}}</textarea>
+                <br><button class="btn btn-primary" onclick="copyText2('forum1')" id="copyButton">Kopyala</button>
+                <hr>
+                <b>Forum BBCode (Direkt):</b><br>
+                <textarea id="forum2" style="resize:both;width:100%;height:100px;max-width: 500px;" onclick="if (!window.__cfRLUnblockHandlers) return false; this.select();">{{if .UrlList}}{{index .UrlList 2}}{{end}}</textarea>
+                <br><button class="btn btn-primary" onclick="copyText2('forum2')" id="copyButton">Kopyala</button>
+                <hr>
+                <b>HTML (Direkt):</b><br>
+                <textarea id="html1" style="resize:both;width:100%;height:100px;max-width: 500px;" onclick="if (!window.__cfRLUnblockHandlers) return false; this.select();">{{if .UrlList}}{{index .UrlList 3}}{{end}}</textarea>
+                <br><button class="btn btn-primary" onclick="copyText2('html1')" id="copyButton">Kopyala</button>
+                <hr>
+                <b>HTML (URL):</b><br>
+                <textarea id="html2" style="resize:both;width:100%;height:100px;max-width: 500px;" onclick="if (!window.__cfRLUnblockHandlers) return false; this.select();">{{if .UrlList}}{{index .UrlList 4}}{{end}}</textarea>
+                <br><button class="btn btn-primary" onclick="copyText2('html2')" id="copyButton">Kopyala</button>
+            </div>
+            {{ end }}
+        </div>
+    </div>
+
+    <script src="js/index.js?v=1"></script>
+</body>
+</html>

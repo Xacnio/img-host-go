@@ -1,0 +1,54 @@
+version: "3.7" # optional since v1.27.0
+services:
+  img-host-go:
+    build:
+      context: .
+      dockerfile: ./Dockerfile
+    image: img-host-go
+    ports:
+      - "5000"
+    depends_on:
+      - redis
+    networks:
+      - goapp
+    environment:
+      - TG_BOT_TOKEN=${TG_BOT_TOKEN}
+      - TG_BOT_CHANNEL_ID=${TG_BOT_CHANNEL_ID}
+      - FIBER_URL=${FIBER_URL}
+      - FIBER_IMG_URL=${FIBER_IMG_URL}
+      - FIBER_HOSTNAME=${FIBER_HOSTNAME}
+      - FIBER_PORT=5000
+      - REDIS_HOST=${REDIS_HOST}
+      - REDIS_PORT=${REDIS_PORT}
+      - REDIS_DB=${REDIS_DB}
+    deploy:
+      replicas: 3
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
+  redis:
+    image: redis:latest
+    command: --port ${REDIS_PORT}
+    ports:
+      - "${REDIS_PORT}:${REDIS_PORT}"
+    networks:
+      - goapp
+    restart: unless-stopped
+  nginx:
+    image: nginx:latest
+    volumes:
+      - ./configs/nginx.conf:/etc/nginx/nginx.conf:ro
+    #depends_on:
+    #  - img-host-go
+    volumes_from:
+      - img-host-go
+    environment:
+      - PORT=8085
+      - NGINX_PORT=8085
+    ports: 
+      - "${WEB_PORT}:8085"
+    networks: 
+      - goapp
+
+networks:
+  goapp:
+    driver: bridge
